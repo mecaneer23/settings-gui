@@ -1,0 +1,10 @@
+create a simple application that can read a settings file in multiple formats and display a menu of options with toggles to change values, then write to file.
+
+Formats:
+- json
+
+functions:
+- read file
+- display [option: [textbox]]
+- display [option: [boolean]]
+- write file
