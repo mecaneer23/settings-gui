@@ -17,7 +17,7 @@ def write_file_json(filename, contents):
     import json
 
     with open(filename, "w") as f:
-        json.dump(contents, f)
+        json.dump(contents, f, indent=4)
 
 
 def get_args():
@@ -28,35 +28,45 @@ def get_args():
     return parser.parse_args()
 
 
-def display_boolean(value):
-    return Gtk.Switch()
+class Menu(Gtk.Window):
+    def __init__(self, filename, filetype="json", **kwargs):
+        Gtk.Window.__init__(self, **kwargs)
+        self.connect("destroy", Gtk.main_quit)
+        self.grid = Gtk.Grid()
+        self.add(self.grid)
+        self.filename = filename
+        self.items = read_file_json(self.filename)
+        for index, (key, value) in enumerate(self.items.items()):
+            self.grid.attach(Gtk.Label(label=key), 0, index, 1, 1)
+            self.grid.attach(self.display(key, value), 1, index, 1, 1)
 
+    def display_boolean(self, key, value):
+        switch = Gtk.Switch()
+        switch.set_active(value)
+        switch.connect("notify::active", lambda s, _: self.write_boolean(key, s))
+        return switch
 
-def display_int(value):
-    return Gtk.Entry()
+    def display_int(self, key, value):
+        return Gtk.Entry()
 
+    def display(self, key, value):
+        if isinstance(value, bool):
+            return self.display_boolean(key, value)
+        elif isinstance(value, int):
+            return self.display_int(key, value)
+        else:
+            print(f"Unknown type for {{{key}: {value}}}:", type(value))
 
-def display(value):
-    if isinstance(value, bool):
-        return display_boolean(value)
-    elif isinstance(value, int):
-        return display_int(value)
-    else:
-        print("Unknown type:", type(value))
+    def write_boolean(self, key, switch,):
+        self.items[key] = switch.get_active()
+        write_file_json(self.filename, self.items)
 
 
 def main(filename):
-    window = Gtk.Window(title=filename)
-    grid = Gtk.Grid()
-    for i, (k, v) in enumerate(read_file_json(filename).items()):
-        grid.attach(Gtk.Label(label=k), 0, i, 1, 1)
-        grid.attach(display(v), 1, i, 1, 1)
-    window.add(grid)
-    window.connect("destroy", Gtk.main_quit)
-    window.show_all()
+    menu = Menu(filename, title=filename)
+    menu.show_all()
     Gtk.main()
 
 
 if __name__ == "__main__":
-    args = get_args()
-    main(args.filename)
+    main(get_args().filename)
