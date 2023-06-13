@@ -38,18 +38,12 @@ class Menu(ctk.CTk):
 
     def make_display_box(self, index, key, value):
         ctk.CTkLabel(self, text=key).grid(row=index, column=0)
-        self.display(index, key, value).grid(row=index, column=1)
+        self.display(index, key, value).grid(row=index, column=1, padx=10)
 
     def display_boolean(self, index, key, value):
         switch_value = ctk.StringVar(value=value)
-        switch = ctk.CTkSwitch(self, text=" ", command=lambda: self.write_boolean(index, key, switch_value), variable=switch_value)
+        switch = ctk.CTkSwitch(self, text=" ", command=lambda: self.write(index, key, bool(int(switch_value.get()))), variable=switch_value)
         return switch
-
-    def write_boolean(self, index, key, switch):
-        position = bool(int(switch.get()))
-        self.items[key] = position
-        write_file_json(self.filename, self.items)
-        self.make_display_box(index, key, position)
 
     def display_int(self, index, key, value):
         # box = ctk.Box()
@@ -70,9 +64,10 @@ class Menu(ctk.CTk):
         # down_button.connect("clicked", lambda _: self.write_int(index, key, value - 1))
         # button_box.pack_start(down_button, True, True, 0)
         # box.pack_start(button_box, True, True, 0)
-        return box
+        # return box
+        return ctk.CTkLabel(self, text="hello world")
 
-    def write_int(self, index, key, value):
+    def write(self, index, key, value):
         self.items[key] = value
         write_file_json(self.filename, self.items)
         self.make_display_box(index, key, value)
