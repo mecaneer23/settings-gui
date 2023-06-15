@@ -115,6 +115,21 @@ class Menu(ctk.CTkScrollableFrame):
         self.display_rows[index][2].set(value)
         self.write(key, value)
 
+    def display_string(self, index, key, value):
+        box = ctk.CTkFrame(self)
+        entry_var = ctk.StringVar(box, value=str(value))
+        entry = ctk.CTkEntry(box, textvariable=entry_var)
+        entry.grid(row=0, column=0)
+        entry.bind(
+            "<Return>", lambda _: self.update_string(index, key, entry_var.get())
+        )
+        self.display_rows[index][2] = entry_var
+        return box
+
+    def update_string(self, index, key, value):
+        self.display_rows[index][2].set(value)
+        self.write(key, value)
+
     def write(self, key, value):
         original_value = self.items[key]
         self.items[key] = value
@@ -126,6 +141,8 @@ class Menu(ctk.CTkScrollableFrame):
             return self.display_boolean(index, key, value)
         elif isinstance(value, int):
             return self.display_int(index, key, value)
+        elif isinstance(value, str):
+            return self.display_string(index, key, value)
         else:
             print(f"Unknown type for {{{key}: {value}}}:", type(value))
 
