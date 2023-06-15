@@ -1,5 +1,7 @@
--7 write back to file
--7 make toggling switches/pressing enter actually do stuff
++7 write back to file
++7 make booleans work
++7 make toggling switches actually do stuff
+-7 make pressing enter actually do stuff
 -7 implement display_int
 -7 add readme
 -7 add app icon
