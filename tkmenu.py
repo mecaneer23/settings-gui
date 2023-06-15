@@ -48,13 +48,8 @@ class Menu(ctk.CTk):
             self.make_display_box(index, key, value)
 
     def make_display_box(self, index, key, value):
-        self.display_rows.insert(
-            index,
-            [
-                ctk.CTkLabel(self, text=key),
-                self.display(index, key, value),
-            ],
-        )
+        self.display_rows.insert(index, [ctk.CTkLabel(self, text=key), None, None])
+        self.display_rows[index][1] = self.display(index, key, value)
         self.display_rows[index][0].grid(row=index, column=0)
         self.display_rows[index][1].grid(row=index, column=1, padx=10)
 
@@ -73,26 +68,29 @@ class Menu(ctk.CTk):
         self.write(key, bool(switch.get()))
 
     def display_int(self, index, key, value):
-        # box = ctk.Box()
-        # entry = Gtk.Entry()
-        # entry.set_text(str(value))
-        # box.pack_start(entry, False, True, 0)
-        # button_box = Gtk.VBox()
-        # up_button = Gtk.Button()
-        # up_button.add(
-        #     Gtk.Arrow(arrow_type=Gtk.ArrowType.UP, shadow_type=Gtk.ShadowType.NONE)
-        # )
-        # up_button.connect("clicked", lambda _: self.write_int(index, key, value + 1))
-        # button_box.pack_start(up_button, True, True, 0)
-        # down_button = Gtk.Button()
-        # down_button.add(
-        #     Gtk.Arrow(arrow_type=Gtk.ArrowType.DOWN, shadow_type=Gtk.ShadowType.NONE)
-        # )
-        # down_button.connect("clicked", lambda _: self.write_int(index, key, value - 1))
-        # button_box.pack_start(down_button, True, True, 0)
-        # box.pack_start(button_box, True, True, 0)
-        # return box
-        return ctk.CTkLabel(self, text="hello world")
+        box = ctk.CTkFrame(self)
+        entry_var = ctk.StringVar(box, value=str(value))
+        entry = ctk.CTkEntry(box, textvariable=entry_var)
+        entry.grid(row=0, column=0, rowspan=2)
+        entry.bind(
+            "<Return>", lambda _: self.update_int(index, key, int(entry_var.get()))
+        )
+        ctk.CTkButton(
+            box,
+            text="▲",
+            command=lambda: self.update_int(index, key, int(entry_var.get()) + 1),
+        ).grid(row=0, column=1)
+        ctk.CTkButton(
+            box,
+            text="▼",
+            command=lambda: self.update_int(index, key, int(entry_var.get()) - 1),
+        ).grid(row=1, column=1)
+        self.display_rows[index][2] = entry_var
+        return box
+
+    def update_int(self, index, key, value):
+        self.display_rows[index][2].set(value)
+        self.write(key, value)
 
     def write(self, key, value):
         original_value = self.items[key]
