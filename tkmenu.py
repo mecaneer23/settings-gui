@@ -97,11 +97,15 @@ class Menu(ctk.CTkScrollableFrame):
         ctk.CTkButton(
             box,
             text="▲",
+            width=10,
+            height=8,
             command=lambda: self.update_int(index, key, int(entry_var.get()) + 1),
         ).grid(row=0, column=1)
         ctk.CTkButton(
             box,
             text="▼",
+            width=10,
+            height=8,
             command=lambda: self.update_int(index, key, int(entry_var.get()) - 1),
         ).grid(row=1, column=1)
         self.display_rows[index][2] = entry_var
