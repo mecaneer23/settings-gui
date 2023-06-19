@@ -36,11 +36,30 @@ def info(message):
     print(f"{CYAN}INFO:{RESET} {message}")
 
 
-class Menu(ctk.CTk):
+class App(ctk.CTk):
     def __init__(self, filename, filetype="json", **kwargs):
         ctk.CTk.__init__(self, **kwargs)
         self.title(filename)
         self.geometry("400x150")
+
+        self.grid_rowconfigure(0, weight=1)
+        self.grid_columnconfigure(0, weight=1)
+
+        self.my_frame = Menu(
+            master=self,
+            filename=filename,
+            filetype=filetype,
+            width=300,
+            height=200,
+            corner_radius=0,
+            fg_color="transparent",
+        )
+        self.my_frame.grid(row=0, column=0, sticky="nsew")
+
+
+class Menu(ctk.CTkScrollableFrame):
+    def __init__(self, filename, filetype, **kwargs):
+        ctk.CTkScrollableFrame.__init__(self, **kwargs)
         self.filename = filename
         self.items = read_file_json(self.filename)
         self.display_rows = []
@@ -108,7 +127,7 @@ class Menu(ctk.CTk):
 
 
 def main(filename):
-    menu = Menu(filename)
+    menu = App(filename)
     menu.mainloop()
 
 
