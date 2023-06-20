@@ -7,7 +7,7 @@ from typing import Literal, Any, Dict
 
 def file_op(
     mode: Literal["write", "w", "read", "r"],
-    filetype: Literal["json", "xml", "yml", "yaml"],
+    filetype: Literal["json", "yml", "yaml"],
     filename: str,
     contents: Any | None = None,
 ) -> Dict:
@@ -16,11 +16,6 @@ def file_op(
             write_file_json(filename, contents)
         elif mode in ("read", "r"):
             return read_file_json(filename)
-    elif filetype == "xml":
-        if mode in ("write", "w"):
-            write_file_xml(filename, contents)
-        elif mode in ("read", "r"):
-            return read_file_xml(filename)
     elif filetype in ("yml", "yaml"):
         if mode in ("write", "w"):
             write_file_yaml(filename, contents)
@@ -55,14 +50,6 @@ def write_file_yaml(filename, contents):
 
     with open(filename, "w") as f:
         dump(contents, f, indent=2, default_flow_style=False, allow_unicode=True)
-
-
-def read_file_xml(filename):
-    raise NotImplementedError
-
-
-def write_file_xml(filename, contents):
-    raise NotImplementedError
 
 
 def get_args():
