@@ -2,17 +2,56 @@
 # pyright: reportMissingImports=false
 
 import customtkinter as ctk
-import json
+from typing import Literal, Any, Dict
+
+
+def file_op(mode: Literal["write", "w", "read", "r"], filetype: Literal["json", "xml", "yml", "yaml"], filename: str, contents: Any | None = None) -> Dict:
+    if filetype == "json":
+        if mode in ("write", "w"):
+            write_file_json(filename, contents)
+        elif mode in ("read", "r"):
+            return read_file_json(filename)
+    elif filetype == "xml":
+        if mode in ("write", "w"):
+            write_file_xml(filename, contents)
+        elif mode in ("read", "r"):
+            return read_file_xml(filename)
+    elif filetype in ("yml", "yaml"):
+        if mode in ("write", "w"):
+            write_file_yaml(filename, contents)
+        elif mode in ("read", "r"):
+            return read_file_yaml(filename)
+    return {}
 
 
 def read_file_json(filename):
+    from json import load
+
     with open(filename) as f:
-        return json.load(f)
+        return load(f)
 
 
 def write_file_json(filename, contents):
+    from json import dump
+
     with open(filename, "w") as f:
-        json.dump(contents, f, indent=4)
+        dump(contents, f, indent=4)
+
+
+def read_file_yaml(filename):
+    raise NotImplementedError
+
+
+def write_file_yaml(filename, contents):
+    raise NotImplementedError
+
+
+def read_file_xml(filename):
+    raise NotImplementedError
+
+
+def write_file_xml(filename, contents):
+    raise NotImplementedError
 
 
 def get_args():
@@ -37,7 +76,7 @@ def info(message):
 
 
 class App(ctk.CTk):
-    def __init__(self, filename, filetype="json", **kwargs):
+    def __init__(self, filename, filetype, **kwargs):
         ctk.CTk.__init__(self, **kwargs)
         self.title(filename)
         self.geometry("400x150")
@@ -61,7 +100,8 @@ class Menu(ctk.CTkScrollableFrame):
     def __init__(self, filename, filetype, **kwargs):
         ctk.CTkScrollableFrame.__init__(self, **kwargs)
         self.filename = filename
-        self.items = read_file_json(self.filename)
+        self.filetype = filetype
+        self.items = file_op("read", self.filetype, self.filename)
         self.display_rows = []
         for index, (key, value) in enumerate(self.items.items()):
             self.make_display_box(index, key, value)
@@ -133,7 +173,7 @@ class Menu(ctk.CTkScrollableFrame):
     def write(self, key, value):
         original_value = self.items[key]
         self.items[key] = value
-        write_file_json(self.filename, self.items)
+        file_op("write", self.filetype, self.filename, self.items)
         info(f"set `{key}` to `{value}` (was `{original_value}`)")
 
     def display(self, index, key, value):
@@ -147,10 +187,6 @@ class Menu(ctk.CTkScrollableFrame):
             print(f"Unknown type for {{{key}: {value}}}:", type(value))
 
 
-def main(filename):
-    menu = App(filename)
-    menu.mainloop()
-
-
 if __name__ == "__main__":
-    main(get_args().filename)
+    filename = get_args().filename
+    App(filename, filename.split(".")[-1]).mainloop()
