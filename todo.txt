@@ -5,7 +5,6 @@
 +7 implement display_int
 +7 make pressing enter actually do stuff
 +7 make int arrow buttons smaller
--7 add csv
 -7 add list support
 -7 add dictionary support
 -7 add app icon
