@@ -5,7 +5,12 @@ import customtkinter as ctk
 from typing import Literal, Any, Dict
 
 
-def file_op(mode: Literal["write", "w", "read", "r"], filetype: Literal["json", "xml", "yml", "yaml"], filename: str, contents: Any | None = None) -> Dict:
+def file_op(
+    mode: Literal["write", "w", "read", "r"],
+    filetype: Literal["json", "xml", "yml", "yaml"],
+    filename: str,
+    contents: Any | None = None,
+) -> Dict:
     if filetype == "json":
         if mode in ("write", "w"):
             write_file_json(filename, contents)
