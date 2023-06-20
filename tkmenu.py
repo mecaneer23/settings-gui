@@ -44,11 +44,17 @@ def write_file_json(filename, contents):
 
 
 def read_file_yaml(filename):
-    raise NotImplementedError
+    from yaml import safe_load
+
+    with open(filename, "r") as f:
+        return safe_load(f)
 
 
 def write_file_yaml(filename, contents):
-    raise NotImplementedError
+    from yaml import dump
+
+    with open(filename, "w") as f:
+        dump(contents, f, indent=2, default_flow_style=False, allow_unicode=True)
 
 
 def read_file_xml(filename):
